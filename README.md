@@ -1,2 +1,4 @@
 # BIM2SAM.AI
-Beam Information Models (BIM) to Structural Analysis Models (SAM) Using Artificial Intelligence
+Building Information Models (BIM) to Structural Analysis Models (SAM) Using Artificial Intelligence
+
+![image](Documents/BIM2SAM.png)
