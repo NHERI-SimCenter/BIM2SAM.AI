@@ -2,7 +2,7 @@ import json
 from pprint import pprint
 from subprocess import call
 import os
-from BeamColumnSAM import BeamColumnBIM, BeamColumnSAM
+from BeamColumnSAM import BeamColumnSAM
 
 
 class BIM2SAM:
