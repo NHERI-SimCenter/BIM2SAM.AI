@@ -1,6 +1,7 @@
 from BIM2SAM import BIM2SAM
-
-
+from BIM import BIM
+import numpy as np
+import pandas as pd
 
 # ------------------------------
 # Continuum model demo
@@ -16,7 +17,6 @@ pars = [N, beta, An, Ap, Bn]
 BIMFileName = "../Data/features2SAM/BIM.json"
 SAMFileName = "../Data/features2SAM/SAM_Continuum.json"
 BIM2SAM(BIMFileName, SAMFileName, 'continuum', pars)
-
 
 
 

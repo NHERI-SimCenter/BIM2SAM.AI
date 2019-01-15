@@ -136,6 +136,13 @@ class BIM:
             # get BE rebar 
             lweb = section['length']
             lbe = section['boundaryElementLength']
+            try:
+                tm = section['longitudinalBoundaryElementRebar']
+            except:
+                features = []
+                print("didn't find boundary rebar")
+                return features
+
             beVertRebarName = section['longitudinalBoundaryElementRebar']['material']
             beVertnumThic = section['longitudinalBoundaryElementRebar']['numBarsThickness']
             beVertnumLen = section['longitudinalBoundaryElementRebar']['numBarsLength']
@@ -292,3 +299,25 @@ class BIM:
         #features = np.cos(features)
         return features
 
+    def getSimpleFeatures(self):
+        features = []
+        features.append(self.height)
+        features.append(self.length)
+        features.append(self.thickness)
+        for mat in self.materials:
+                if (mat['name'] == 'Concrete'):
+                    masspervolumeConc = mat['masspervolume']
+                    fc = mat['fpc']*(-1)
+                    Ec = mat['E']
+                    nu = mat['nu']
+                    epsc = mat['eps0']*(-1)
+                    eps = epsc
+                    epscu = mat['epsU']*(-1)
+                    fcu = mat['fpcU']*(-1)
+                    ratio = mat['alpha']
+                    ft = mat['ft']
+                    Ets = mat['Ets']
+                    break
+        features.append(Ec)
+        features.append(-fc)
+        return(features)

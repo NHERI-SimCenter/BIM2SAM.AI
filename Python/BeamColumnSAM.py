@@ -1,7 +1,7 @@
 from collections import namedtuple
 import json
 from pprint import pprint
-from math import floor
+from math import floor, isnan
 import os
 from BIM import BIM
 
@@ -158,21 +158,25 @@ class BeamColumnSAM:
                     epsu = mat['epsu']
                     break
             
-
-            beVertRebarName = section['longitudinalBoundaryElementRebar']['material']
-            beVertnumThic = section['longitudinalBoundaryElementRebar']['numBarsThickness']
-            beVertnumLen = section['longitudinalBoundaryElementRebar']['numBarsLength']
-            beVertbarArea = section['longitudinalBoundaryElementRebar']['barArea']
-            beVertcover = section['longitudinalBoundaryElementRebar']['cover']
-            for mat in self.BIM.materials:
-                if (mat['name'] == beVertRebarName):
-                    masspervolumeVertRebar = mat['masspervolume']
-                    Ebe = mat['E']
-                    fybe = mat['fy']
-                    fube = mat['fu']
-                    epsube = mat['epsu']
-                    epsrbe = mat['epsr']
-                    break
+            try:
+                beVertRebarName = section['longitudinalBoundaryElementRebar']['material']
+                beVertnumThic = section['longitudinalBoundaryElementRebar']['numBarsThickness']
+                beVertnumLen = section['longitudinalBoundaryElementRebar']['numBarsLength']
+                beVertbarArea = section['longitudinalBoundaryElementRebar']['barArea']
+                beVertcover = section['longitudinalBoundaryElementRebar']['cover']
+                for mat in self.BIM.materials:
+                    if (mat['name'] == beVertRebarName):
+                        masspervolumeVertRebar = mat['masspervolume']
+                        Ebe = mat['E']
+                        fybe = mat['fy']
+                        fube = mat['fu']
+                        epsube = mat['epsu']
+                        epsrbe = mat['epsr']
+                        break
+            except:
+                # didn't find boundary element
+                Ebe = float('nan')
+                fybe = float('nan')
 
             
             for n in range(0,self.nInt):
@@ -231,28 +235,29 @@ class BeamColumnSAM:
                 self.mats.append(matWebRebar)
 
                 # BE rebar
-                matBERebar = {}
-                matBERebar['name'] = str(matTag + 5)
-                matBERebar['type'] = 'Steel02'
-                matBERebar['E'] = Ebe
-                matBERebar['fy'] = fybe
-                matBERebar['b'] = 0.005 # assumed
-                matBERebar['R0'] = 20 
-                matBERebar['cR1'] = 0.925
-                matBERebar['cR2'] = 0.15
-                matBERebar['a1'] = 0.0
-                matBERebar['a2'] = 1.0
-                matBERebar['a3'] = 0.0
-                matBERebar['a4'] = 1.0
-                matBERebar['sigini'] = 0.0
-                self.mats.append(matBERebar)
-                matBERebar = {}
-                matBERebar['name'] = str(matTag + 6)
-                matBERebar['type'] = 'MinMaxMaterial'
-                matBERebar['material'] = str(matTag + 5)
-                matBERebar['epsMin'] = -0.008 # assumed
-                matBERebar['epsMax'] = 0.0785 # assumed
-                self.mats.append(matBERebar)
+                if lbe > 0.000001: 
+                    matBERebar = {}
+                    matBERebar['name'] = str(matTag + 5)
+                    matBERebar['type'] = 'Steel02'
+                    matBERebar['E'] = Ebe
+                    matBERebar['fy'] = fybe
+                    matBERebar['b'] = 0.005 # assumed
+                    matBERebar['R0'] = 20 
+                    matBERebar['cR1'] = 0.925
+                    matBERebar['cR2'] = 0.15
+                    matBERebar['a1'] = 0.0
+                    matBERebar['a2'] = 1.0
+                    matBERebar['a3'] = 0.0
+                    matBERebar['a4'] = 1.0
+                    matBERebar['sigini'] = 0.0
+                    self.mats.append(matBERebar)
+                    matBERebar = {}
+                    matBERebar['name'] = str(matTag + 6)
+                    matBERebar['type'] = 'MinMaxMaterial'
+                    matBERebar['material'] = str(matTag + 5)
+                    matBERebar['epsMin'] = -0.008 # assumed
+                    matBERebar['epsMax'] = 0.0785 # assumed
+                    self.mats.append(matBERebar)
 
                 #{"name": "90", "type": "Steel01", "E": 74936.7, "fy": 50, "b": 1, "a1": 0, "a2": 55, "a3": 0, "a4": 55},
                 alphaShear = 0.042
@@ -286,96 +291,97 @@ class BeamColumnSAM:
                     coordY = 0.0
                     fiber = {"coord": [coordX, coordY], "area": areaFiber, "material": str(matTag + 1)}
                     fibers.append(fiber)
-                # right BE core
-                wFiber = (lbe-beVertcover*2) / self.numBEY
-                areaFiber = wFiber * (t-beVertcover*2) 
-                coordX = lweb/2 + beVertcover - wFiber/2
-                for nf in range(0,self.numBEY):
-                    coordX += wFiber
-                    coordY = 0.0
-                    fiber = {"coord": [coordX, coordY], "area": areaFiber, "material": str(matTag + 2)}
-                    fibers.append(fiber)
-                # left BE core
-                wFiber = (lbe-beVertcover*2) / self.numBEY
-                areaFiber = wFiber * (tbe-beVertcover*2) 
-                coordX = -(lweb/2 + beVertcover - wFiber/2)
-                for nf in range(0,self.numBEY):
-                    coordX -= wFiber
-                    coordY = 0.0
-                    fiber = {"coord": [coordX, coordY], "area": areaFiber, "material": str(matTag + 2)}
-                    fibers.append(fiber)
-                # right BE right cover
-                wFiber = (beVertcover) / self.numBECRY
-                areaFiber = wFiber * tbe 
-                coordX = l/2 - beVertcover - wFiber/2
-                for nf in range(0,self.numBECRY):
-                    coordX += wFiber
-                    coordY = 0.0
-                    fiber = {"coord": [coordX, coordY], "area": areaFiber, "material": str(matTag + 1)}
-                    fibers.append(fiber)
-                # left BE left cover
-                wFiber = (beVertcover) / self.numBECRY
-                areaFiber = wFiber * tbe 
-                coordX = -(l/2 - beVertcover - wFiber/2)
-                for nf in range(0,self.numBECRY):
-                    coordX -= wFiber
-                    coordY = 0.0
-                    fiber = {"coord": [coordX, coordY], "area": areaFiber, "material": str(matTag + 1)}
-                    fibers.append(fiber)
-                # right BE left cover
-                wFiber = (beVertcover) / self.numBECLY
-                areaFiber = wFiber * tbe 
-                coordX = lweb/2 - wFiber/2
-                for nf in range(0,self.numBECLY):
-                    coordX += wFiber
-                    coordY = 0.0
-                    fiber = {"coord": [coordX, coordY], "area": areaFiber, "material": str(matTag + 1)}
-                    fibers.append(fiber)
-                # left BE right cover
-                wFiber = (beVertcover) / self.numBECLY
-                areaFiber = wFiber * tbe 
-                coordX = -(lweb/2 - wFiber/2)
-                for nf in range(0,self.numBECLY):
-                    coordX -= wFiber
-                    coordY = 0.0
-                    fiber = {"coord": [coordX, coordY], "area": areaFiber, "material": str(matTag + 1)}
-                    fibers.append(fiber)
-                # right BE top cover
-                wFiber = (lbe - 2*beVertcover) / self.numBECTY
-                areaFiber = wFiber * beVertcover 
-                coordX = lweb/2 + beVertcover - wFiber/2
-                for nf in range(0,self.numBECTY):
-                    coordX += wFiber
-                    coordY = 0.0
-                    fiber = {"coord": [coordX, coordY], "area": areaFiber, "material": str(matTag + 1)}
-                    fibers.append(fiber)
-                # left BE top cover
-                wFiber = (lbe - 2*beVertcover) / self.numBECTY
-                areaFiber = wFiber * beVertcover 
-                coordX = -(lweb/2 + beVertcover - wFiber/2)
-                for nf in range(0,self.numBECTY):
-                    coordX -= wFiber
-                    coordY = 0.0
-                    fiber = {"coord": [coordX, coordY], "area": areaFiber, "material": str(matTag + 1)}
-                    fibers.append(fiber)
-                # right BE bottom cover
-                wFiber = (lbe - 2*beVertcover) / self.numBECBY
-                areaFiber = wFiber * beVertcover 
-                coordX = lweb/2 + beVertcover - wFiber/2
-                for nf in range(0,self.numBECBY):
-                    coordX += wFiber
-                    coordY = 0.0
-                    fiber = {"coord": [coordX, coordY], "area": areaFiber, "material": str(matTag + 1)}
-                    fibers.append(fiber)
-                # left BE bottom cover
-                wFiber = (lbe - 2*beVertcover) / self.numBECBY
-                areaFiber = wFiber * beVertcover 
-                coordX = -(lweb/2 + beVertcover - wFiber/2)
-                for nf in range(0,self.numBECBY):
-                    coordX -= wFiber
-                    coordY = 0.0
-                    fiber = {"coord": [coordX, coordY], "area": areaFiber, "material": str(matTag + 1)}
-                    fibers.append(fiber)
+                if lbe > 0.000001:
+                    # right BE core
+                    wFiber = (lbe-beVertcover*2) / self.numBEY
+                    areaFiber = wFiber * (t-beVertcover*2) 
+                    coordX = lweb/2 + beVertcover - wFiber/2
+                    for nf in range(0,self.numBEY):
+                        coordX += wFiber
+                        coordY = 0.0
+                        fiber = {"coord": [coordX, coordY], "area": areaFiber, "material": str(matTag + 2)}
+                        fibers.append(fiber)
+                    # left BE core
+                    wFiber = (lbe-beVertcover*2) / self.numBEY
+                    areaFiber = wFiber * (tbe-beVertcover*2) 
+                    coordX = -(lweb/2 + beVertcover - wFiber/2)
+                    for nf in range(0,self.numBEY):
+                        coordX -= wFiber
+                        coordY = 0.0
+                        fiber = {"coord": [coordX, coordY], "area": areaFiber, "material": str(matTag + 2)}
+                        fibers.append(fiber)
+                    # right BE right cover
+                    wFiber = (beVertcover) / self.numBECRY
+                    areaFiber = wFiber * tbe 
+                    coordX = l/2 - beVertcover - wFiber/2
+                    for nf in range(0,self.numBECRY):
+                        coordX += wFiber
+                        coordY = 0.0
+                        fiber = {"coord": [coordX, coordY], "area": areaFiber, "material": str(matTag + 1)}
+                        fibers.append(fiber)
+                    # left BE left cover
+                    wFiber = (beVertcover) / self.numBECRY
+                    areaFiber = wFiber * tbe 
+                    coordX = -(l/2 - beVertcover - wFiber/2)
+                    for nf in range(0,self.numBECRY):
+                        coordX -= wFiber
+                        coordY = 0.0
+                        fiber = {"coord": [coordX, coordY], "area": areaFiber, "material": str(matTag + 1)}
+                        fibers.append(fiber)
+                    # right BE left cover
+                    wFiber = (beVertcover) / self.numBECLY
+                    areaFiber = wFiber * tbe 
+                    coordX = lweb/2 - wFiber/2
+                    for nf in range(0,self.numBECLY):
+                        coordX += wFiber
+                        coordY = 0.0
+                        fiber = {"coord": [coordX, coordY], "area": areaFiber, "material": str(matTag + 1)}
+                        fibers.append(fiber)
+                    # left BE right cover
+                    wFiber = (beVertcover) / self.numBECLY
+                    areaFiber = wFiber * tbe 
+                    coordX = -(lweb/2 - wFiber/2)
+                    for nf in range(0,self.numBECLY):
+                        coordX -= wFiber
+                        coordY = 0.0
+                        fiber = {"coord": [coordX, coordY], "area": areaFiber, "material": str(matTag + 1)}
+                        fibers.append(fiber)
+                    # right BE top cover
+                    wFiber = (lbe - 2*beVertcover) / self.numBECTY
+                    areaFiber = wFiber * beVertcover 
+                    coordX = lweb/2 + beVertcover - wFiber/2
+                    for nf in range(0,self.numBECTY):
+                        coordX += wFiber
+                        coordY = 0.0
+                        fiber = {"coord": [coordX, coordY], "area": areaFiber, "material": str(matTag + 1)}
+                        fibers.append(fiber)
+                    # left BE top cover
+                    wFiber = (lbe - 2*beVertcover) / self.numBECTY
+                    areaFiber = wFiber * beVertcover 
+                    coordX = -(lweb/2 + beVertcover - wFiber/2)
+                    for nf in range(0,self.numBECTY):
+                        coordX -= wFiber
+                        coordY = 0.0
+                        fiber = {"coord": [coordX, coordY], "area": areaFiber, "material": str(matTag + 1)}
+                        fibers.append(fiber)
+                    # right BE bottom cover
+                    wFiber = (lbe - 2*beVertcover) / self.numBECBY
+                    areaFiber = wFiber * beVertcover 
+                    coordX = lweb/2 + beVertcover - wFiber/2
+                    for nf in range(0,self.numBECBY):
+                        coordX += wFiber
+                        coordY = 0.0
+                        fiber = {"coord": [coordX, coordY], "area": areaFiber, "material": str(matTag + 1)}
+                        fibers.append(fiber)
+                    # left BE bottom cover
+                    wFiber = (lbe - 2*beVertcover) / self.numBECBY
+                    areaFiber = wFiber * beVertcover 
+                    coordX = -(lweb/2 + beVertcover - wFiber/2)
+                    for nf in range(0,self.numBECBY):
+                        coordX -= wFiber
+                        coordY = 0.0
+                        fiber = {"coord": [coordX, coordY], "area": areaFiber, "material": str(matTag + 1)}
+                        fibers.append(fiber)
 
                 # web rebar vert
                 #webVertnumThic 
@@ -390,25 +396,25 @@ class BeamColumnSAM:
                         fiber = {"coord": [coordX, coordY], "area": areaFiber, "material": str(matTag + 4)}
                         fibers.append(fiber)
 
-                
-                # BE rebar vert 
-                areaFiber = beVertbarArea
-                dFiber = (beVertbarArea / 3.14159)**0.5*2
-                numBars = int(beVertnumLen)
-                if numBars <= 1:
-                    numBars = 1
-                    beVertspacing = (lbe-beVertcover*2-dFiber*numBars)/(numBars)
-                else:
-                    beVertspacing = (lbe-beVertcover*2-dFiber*numBars)/(numBars-1)
-                coordX = lweb/2 + beVertcover - beVertspacing - dFiber/2
-                coordY = 0
-                for nf in range(0,numBars):
-                    coordX += (beVertspacing+dFiber)
-                    for nfT in range(0,beVertnumThic):
-                        fiber = {"coord": [coordX, coordY], "area": areaFiber, "material": str(matTag + 6)}
-                        fibers.append(fiber)   
-                        fiber = {"coord": [-coordX, coordY], "area": areaFiber, "material": str(matTag + 6)}
-                        fibers.append(fiber)    
+                if lbe > 0.000001:
+                    # BE rebar vert 
+                    areaFiber = beVertbarArea
+                    dFiber = (beVertbarArea / 3.14159)**0.5*2
+                    numBars = int(beVertnumLen)
+                    if numBars <= 1:
+                        numBars = 1
+                        beVertspacing = (lbe-beVertcover*2-dFiber*numBars)/(numBars)
+                    else:
+                        beVertspacing = (lbe-beVertcover*2-dFiber*numBars)/(numBars-1)
+                    coordX = lweb/2 + beVertcover - beVertspacing - dFiber/2
+                    coordY = 0
+                    for nf in range(0,numBars):
+                        coordX += (beVertspacing+dFiber)
+                        for nfT in range(0,beVertnumThic):
+                            fiber = {"coord": [coordX, coordY], "area": areaFiber, "material": str(matTag + 6)}
+                            fibers.append(fiber)   
+                            fiber = {"coord": [-coordX, coordY], "area": areaFiber, "material": str(matTag + 6)}
+                            fibers.append(fiber)    
 
 
                 sect['fibers'] = fibers
@@ -537,6 +543,21 @@ for nInt in [5,7,9]:
     SAMModel.setMesh(32, 32, 2, 2, 4, 4, nInt)
     SAMModel.createSAM()
     SAMModel.writeSAM(SAMName)
+exit()
+'''
+
+'''
+for testName in os.listdir(dataDir):
+    BIMName = os.path.join(dataDir, testName,'RCWall_'+testName+'_BIM.json')
+    print(testName)
+    for nInt in [5,7,9]:
+            SAMName = os.path.join(dataDir, testName,'RCWall_'+testName+'nInt'+str(nInt)+'_SAM.json')
+            SAMModel = BeamColumnSAM()
+            SAMModel.readBIM(BIMName)
+            SAMModel.setMesh(32, 32, 2, 2, 4, 4, nInt)
+            SAMModel.createSAM()
+            SAMModel.writeSAM(SAMName)
+            del(SAMModel)
 exit()
 '''
 
