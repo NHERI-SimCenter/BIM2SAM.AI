@@ -1,0 +1,5 @@
+make distclean
+rm *o
+make
+# ./SAMBuilder fileNameBIM fileNameSAM nL nH beta An Ap Bn
+ 

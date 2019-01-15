@@ -1,3 +1,15 @@
+# -*- coding: utf-8 -*-
+"""
+/*------------------------------------------------------*
+| This script is a demo for showing how to use the      |
+| BIM2SAM class.                                        |
+|                                                       |
+| Author: Charles Wang,  UC Berkeley c_w@berkeley.edu   |
+|                                                       |
+| Date:   01/09/2019                                    |
+*------------------------------------------------------*/
+"""
+
 from BIM2SAM import BIM2SAM
 from BIM import BIM
 import numpy as np

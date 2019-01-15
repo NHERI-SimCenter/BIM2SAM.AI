@@ -1,9 +1,25 @@
+# -*- coding: utf-8 -*-
+"""
+/*------------------------------------------------------*
+| This script is a demo showing how to                  |
+| use the BIM->SAM->OpenSees Pipeline.                  | 
+|                                                       |
+| Author: Charles Wang,  UC Berkeley c_w@berkeley.edu   |
+|                                                       |
+| Date:   01/09/2019                                    |
+*------------------------------------------------------*/
+"""
+
+import os
+from subprocess import call
+from shutil import copyfile
 from BIM2SAM import BIM2SAM
 from BIM import BIM
 import numpy as np
 import pandas as pd
 import tensorflow as tf
 from tensorflow.keras.models import model_from_json
+
 
 
 # ------------------------------
@@ -55,5 +71,14 @@ print(pars)
 
 # perform BIM2SAM
 BIM2SAM(BIMFileName, SAMFileName, 'continuum', pars)
+
+
+# create opensees tcl file
+TclCreator = '../Cpp/TclBuilder/TclBuilder'
+algoPath = 'CyclicSolutionAlgorithm.tcl'
+tclName = "../Data/features2SAM/continuumWall.tcl"  
+EVTFileName = "../Data/features2SAM/EVT.json"
+EDPFileName = "../Data/features2SAM/EDP.json"
+call([TclCreator,BIMFileName,SAMFileName,EVTFileName,EDPFileName,tclName])
 
 

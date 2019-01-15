@@ -6,23 +6,23 @@ LDFLAGS=
 LDLIBS=/usr/local/lib/libjansson.a
 
 SRCS=ConcreteShearWall.cpp \
-	createSAM.cpp 
+	SAMBuilder.cpp 
 
 OBJS= ConcreteShearWall.o 
 
-all: createSAM 
+all: SAMBuilder 
 
-createSAM.o: createSAM.cpp
+SAMBuilder.o: SAMBuilder.cpp
 
 ConcreteShearWall.o: ConcreteShearWall.cpp
 
-createSAM: $(OBJS) createSAM.o
-	$(CXX) $(LDFLAGS) -o createSAM createSAM.o $(OBJS) $(LDLIBS)
+SAMBuilder: $(OBJS) SAMBuilder.o
+	$(CXX) $(LDFLAGS) -o SAMBuilder SAMBuilder.o $(OBJS) $(LDLIBS)
 
 clean:
-	$(RM) $(OBJS) *~ \#* createSAM.o
+	$(RM) $(OBJS) *~ \#* SAMBuilder.o
 
 distclean: clean
-	$(RM) createSAM 
+	$(RM) SAMBuilder 
 
 

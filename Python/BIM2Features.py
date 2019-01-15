@@ -1,3 +1,15 @@
+# -*- coding: utf-8 -*-
+"""
+/*------------------------------------------------------*
+| This script is a demo for showing how to use the      |
+| BIM class to get features.                            |
+|                                                       |
+| Author: Charles Wang,  UC Berkeley c_w@berkeley.edu   |
+|                                                       |
+| Date:   01/09/2019                                    |
+*------------------------------------------------------*/
+"""
+
 from BIM import BIM
 import numpy as np
 import pandas as pd

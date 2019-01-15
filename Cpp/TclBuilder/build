@@ -1,0 +1,6 @@
+make distclean
+#rm OpenSeesTclBuilder.o
+#rm mainPreprocessor.o 
+make debug
+#./TclBuilder data/RCWall_DazioWSH6_BIM.json data/RCWall_DazioWSH6_ContinuumSAM.json data/RCWall_DazioWSH6_EVT.json data/RCWall_DazioWSH6_EDP.json data/RCWall_DazioWSH6.tcl
+#./TclBuilder data/RCWall_DazioWSH6_BIM.json data/RCWall_DazioWSH6nInt5_SAM.json data/RCWall_DazioWSH6_EVT.json data/RCWall_DazioWSH6_EDP.json data/nInt5

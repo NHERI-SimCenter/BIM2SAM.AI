@@ -1,3 +1,13 @@
+# -*- coding: utf-8 -*-
+"""
+/*----------------------------------------------------------------*
+| This script is used to run all generated tcl files in opensees. |
+|                                                                 |
+| Author: Charles Wang,  UC Berkeley c_w@berkeley.edu             |
+|                                                                 |
+| Date:   01/09/2019                                              |
+*----------------------------------------------------------------*/
+"""
 from collections import namedtuple
 import json
 from pprint import pprint

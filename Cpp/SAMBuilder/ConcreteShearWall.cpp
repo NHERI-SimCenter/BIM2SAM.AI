@@ -1,6 +1,12 @@
+/*------------------------------------------------------*
+| A class for creating SAM files                        |
+| Inputs:  BIM                                          |
+| Authors: Charles Wang,  UC Berkeley c_w@berkeley.edu  |
+|          Frank McKenna, UC Berkeley                   |
+| Date:    01/15/2019                                   |
+*------------------------------------------------------*/
 #include "ConcreteShearWall.h"
 #include <jansson.h> // for Json
-
 #include <iostream>
 #include <cmath>
 #include <cstring>

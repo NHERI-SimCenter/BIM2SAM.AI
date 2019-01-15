@@ -1,16 +1,16 @@
-
-
+/*------------------------------------------------------*
+| This code is used to create SAM files                 |
+| Inputs:  BIM                                          |
+| Authors: Charles Wang,  UC Berkeley c_w@berkeley.edu  |
+|          Frank McKenna, UC Berkeley                   |
+| Date:    01/15/2019                                   |
+*------------------------------------------------------*/
 #include <stdio.h>
 #include <stdlib.h>
-
 #include <iostream>
 #include <sstream>
 #include <fstream>
 #include <cctype>
-
-
-
-
 #include "ConcreteShearWall.h"
 
 
@@ -22,7 +22,7 @@ int main(int argc, char **argv)
 
   if (argc != 9)
   {
-    printf("ERROR: correct usage: createSAM fileNameBIM fileNameSAM nL nH beta An Ap Bn \n");
+    printf("ERROR: correct usage: SAMBuilder fileNameBIM fileNameSAM nL nH beta An Ap Bn \n");
     // nL is the number of element in the length-direction of a section
     // nH is the number of element in the height-direction of a section
     exit(0);

@@ -1,3 +1,13 @@
+# -*- coding: utf-8 -*-
+"""
+/*---------------------------------------------------------*
+| A calss of Beam-Column SAM model for concrete shear wall |
+|                                                          |
+| Author: Charles Wang,  UC Berkeley c_w@berkeley.edu      |
+|                                                          |
+| Date:   01/09/2019                                       |
+*---------------------------------------------------------*/
+"""
 from collections import namedtuple
 import json
 from pprint import pprint

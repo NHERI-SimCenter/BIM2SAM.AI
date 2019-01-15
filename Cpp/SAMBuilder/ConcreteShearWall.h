@@ -1,3 +1,10 @@
+/*------------------------------------------------------*
+| A class for creating SAM files                        |
+| Inputs:  BIM                                          |
+| Authors: Charles Wang,  UC Berkeley c_w@berkeley.edu  |
+|          Frank McKenna, UC Berkeley                   |
+| Date:    01/15/2019                                   |
+*------------------------------------------------------*/
 #ifndef CONCRETE_SHEAR_WALL_H
 #define CONCRETE_SHEAR_WALL_H
 

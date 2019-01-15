@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-Created on Jan 9, 2019
-
-@author: Charles Wang
+/*------------------------------------------------------*
+| This script is used to train a neural net to predict  |
+| SAM parameters given BIM features.                    |
+|                                                       |
+| Author: Charles Wang,  UC Berkeley c_w@berkeley.edu   |
+|                                                       |
+| Date:   01/09/2019                                    |
+*------------------------------------------------------*/
 """
 
 from __future__ import absolute_import, division, print_function
@@ -82,8 +87,7 @@ def norm(x):
 normed_train_data = norm(train_dataset)
 normed_test_data = norm(test_dataset)
 
-print(train_stats)
-exit()
+
 
 
 # Build the model
@@ -166,6 +170,7 @@ hist['epoch'] = history.epoch
 print('\n')
 print(hist.tail())
 plot_history(history)
+plt.savefig('../../Documents/Figures/NN_ContinuumWall_TrainingLoss_V1.png')
 
 
 loss, mae, mse = model.evaluate(normed_test_data, test_labels, verbose=0)
@@ -186,7 +191,9 @@ print("Saved model to disk")
 # Predict
 test_predictions = model.predict(normed_test_data).flatten()
 
-plt.figure(figsize=(800,40))
+
+
+plt.figure(figsize=(20,10))
 plt.subplot(2,5,1)
 trueValues = test_labels['Ap']
 predictValues = test_predictions[0::5]
@@ -220,7 +227,7 @@ _ = plt.plot([-100, 100], [-100, 100])
 plt.subplot(2,5,7)
 error = predictValues - trueValues
 plt.hist(error, bins = 25)
-plt.xlabel("Prediction Error [Ap]")
+plt.xlabel("Prediction Error [An]")
 _ = plt.ylabel("Count")
 
 plt.subplot(2,5,3)
@@ -279,5 +286,5 @@ plt.hist(error, bins = 25)
 plt.xlabel("Prediction Error [N]")
 _ = plt.ylabel("Count")
 
-
+plt.savefig('../../Documents/Figures/NN_ContinuumWall_Predictions_V1.png')
 plt.show()
