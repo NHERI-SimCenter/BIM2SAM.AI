@@ -29,7 +29,7 @@ class BIM2SAM:
         if SAMType == 'continuum':
             if not os.path.isfile('../Cpp/SAMBuilder/SAMBuilder'):
                 # build the createSAM excutable
-                call(["cd ../Cpp && sh run && cd ../Python"], shell=True)
+                call(["cd ../Cpp && sh build && cd ../Python"], shell=True)
             if len(pars) != 5:
                 print('The number of parameters for continuum model most be 5.')
                 exit()
