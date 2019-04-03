@@ -26,3 +26,6 @@ python BIM2FeaturesNN_V1.py
 cd Python
 python main.py
 ```
+
+### Working notes and Ongoing developments:
+[Notes:](../master/Documents/WorkingNote.pptx)
