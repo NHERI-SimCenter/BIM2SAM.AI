@@ -28,4 +28,4 @@ python main.py
 ```
 
 ### Working notes and Ongoing developments:
-[Notes:](../master/Documents/WorkingNote.pptx)
+[Notes](../master/Documents/WorkingNote.pptx)
