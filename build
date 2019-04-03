@@ -1,0 +1,5 @@
+cd Cpp/SAMBuilder
+sh build
+cd ../TclBuilder
+sh build
+cd ../..
