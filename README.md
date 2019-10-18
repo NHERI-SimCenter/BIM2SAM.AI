@@ -27,5 +27,10 @@ cd Python
 python main.py
 ```
 
-### Working notes and Ongoing developments:
-[Notes](../master/Documents/WorkingNote.pptx)
+### How to cite
+Charles Wang. (2019, October 7). NHERI-SimCenter/BIM2SAM.AI: Release v0.1 (Version v0.1). Zenodo. http://doi.org/10.5281/zenodo.3475532
+
+### Acknowledgement
+
+This material is based upon work supported by the National Science Foundation under Grant No. 1612843.
+
