@@ -28,7 +28,7 @@ python main.py
 ```
 
 ### How to cite
-Charles Wang. (2019, October 18). NHERI-SimCenter/BIM2SAM.AI: Release v1.0 (Version 1.0). Zenodo. http://doi.org/10.5281/zenodo.3509957
+Charles Wang, Caigui Jiang, Stella X. Yu, Frank McKenna, & Kincho H. Law. (2019, October 18). NHERI-SimCenter/BIM2SAM.AI: Release v1.0 (Version 1.0). Zenodo. http://doi.org/10.5281/zenodo.3509957
 
 ### Acknowledgement
 
